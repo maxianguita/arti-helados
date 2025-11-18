@@ -5,7 +5,8 @@ import CustomerForm from "../components/CustomerForm";
 import SizeSelector from "../components/SizeSelector";
 import FlavorSelector from "../components/FlavorSelector";
 import ConfirmOrder from "../components/ConfirmOrder";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar.jsx";
+
 import MapModal from "../components/MapModal";
 import SideMenu from "../components/SideMenu";
 import PanelControl from "../components/PanelControl";
