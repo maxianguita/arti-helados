@@ -1,19 +1,16 @@
 // src/pages/Home.jsx
 import { useState, useEffect } from "react";
-
 import CustomerForm from "../components/CustomerForm";
 import SizeSelector from "../components/SizeSelector";
 import FlavorSelector from "../components/FlavorSelector";
 import ConfirmOrder from "../components/ConfirmOrder";
 import Navbar from "../components/Navbar";
-
 import MapModal from "../components/MapModal";
 import SideMenu from "../components/SideMenu";
 import PanelControl from "../components/PanelControl";
-
 import Logo from "../assets/arti.png";
 
-// ---- Estilos ----
+// ---- Estilos ---- 
 const styles = {
   appContainer: {
     backgroundColor: "#fcfcfc",
