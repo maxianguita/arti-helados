@@ -1,7 +1,7 @@
 // src/components/SideMenu.jsx
 import { useNavigate } from "react-router-dom";
 
-export default function SideMenu({ open, closeMenu, openPanel, navigate }) {
+ function SideMenu({ open, closeMenu, openPanel, navigate }) {
     const nav = useNavigate();
     const logged = localStorage.getItem("token");
 
@@ -114,3 +114,4 @@ export default function SideMenu({ open, closeMenu, openPanel, navigate }) {
         </>
     );
 }
+export default SideMenu

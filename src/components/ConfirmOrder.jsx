@@ -85,7 +85,7 @@ const styles = {
   },
 };
 
-export default function ConfirmOrder({ customer, size, flavors, sectionStyle }) {
+ function ConfirmOrder({ customer, size, flavors, sectionStyle }) {
   const [popup, setPopup] = useState(false);
   const [sending, setSending] = useState(false);
 
@@ -169,3 +169,4 @@ const message =
     </>
   );
 }
+export default ConfirmOrder

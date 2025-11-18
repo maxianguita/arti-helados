@@ -4,7 +4,8 @@ import CustomerForm from "../components/CustomerForm";
 import SizeSelector from "../components/SizeSelector";
 import FlavorSelector from "../components/FlavorSelector";
 import ConfirmOrder from "../components/ConfirmOrder";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar.jsx";
+
 import MapModal from "../components/MapModal";
 import SideMenu from "../components/SideMenu";
 import PanelControl from "../components/PanelControl";
@@ -27,7 +28,7 @@ const styles = {
   logoWrapper: {
     textAlign: "center",
     marginBottom: "25px",
-    marginTop: "90px",       // ← ESPACIO AGREGADO
+    marginTop: "90px",       
   },
   logoImg: {
     width: "160px",
@@ -38,7 +39,7 @@ const styles = {
   },
 };
 
-export default function Home() {
+ function Home() {
   const [customer, setCustomer] = useState({ name: "", phone: "" });
   const [size, setSize] = useState(null);
   const [maxFlavors, setMaxFlavors] = useState(0);
@@ -53,7 +54,7 @@ useEffect(() => {
   fetch("http://localhost:4000/api/flavors")
     .then((res) => res.json())
     .then((data) => {
-      console.log("Sabores cargados:", data); // Debug
+      //console.log("Sabores cargados:", data); 
       setAvailableFlavors(data.map((f) => f.name));
     })
     .catch((err) => console.error("Error cargando sabores:", err));
@@ -134,3 +135,4 @@ useEffect(() => {
     </div>
   );
 }
+export default Home;

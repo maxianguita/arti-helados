@@ -97,7 +97,7 @@ const styles = {
   // Nota: `:hover` no se aplica, pero en CSS sería `backgroundColor: #e5e5e5`
 };
 
-export default function MapModal({ isVisible, onClose }) {
+ function MapModal({ isVisible, onClose }) {
   if (!isVisible) return null;
 
   // Cerrar con tecla ESC
@@ -142,3 +142,5 @@ export default function MapModal({ isVisible, onClose }) {
     </div>
   );
 }
+
+export default MapModal

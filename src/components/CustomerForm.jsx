@@ -1,7 +1,7 @@
 // src/components/CustomerForm.jsx
-import React from "react";
 
-export default function CustomerForm({ customer, setCustomer }) {
+
+function CustomerForm({ customer, setCustomer }) {
   const handlePhoneChange = (value) => {
     const digits = value.replace(/\D/g, "");
     setCustomer({ ...customer, phone: digits });
@@ -110,3 +110,5 @@ export default function CustomerForm({ customer, setCustomer }) {
     </div>
   );
 }
+
+export default CustomerForm

@@ -2,9 +2,9 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import React from "react";
 
-export default function Login() {
+
+function Login() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -152,3 +152,4 @@ export default function Login() {
     </>
   );
 }
+export default Login

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function PanelControl({ onClose }) {
+function PanelControl({ onClose }) {
   const [flavors, setFlavors] = useState([]);
   const [newFlavor, setNewFlavor] = useState("");
 
@@ -234,3 +234,4 @@ export default function PanelControl({ onClose }) {
     </>
   );
 }
+export default  PanelControl

@@ -1,5 +1,5 @@
 // src/components/SizeSelector.jsx
-import React from "react";
+
 
 // Definición de Estilos Minimalistas Inline - Inspiración ARTI HELADOS 🍦
 const styles = {
@@ -58,7 +58,7 @@ const styles = {
   },
 };
 
-export function SizeSelector({ size, handleSelectSize }) {
+ SizeSelector({ size, handleSelectSize }) {
   const sizes = ["1/4 kg", "1/2 kg", "1 kg"];
 
   return (
