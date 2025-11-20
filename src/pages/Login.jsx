@@ -15,13 +15,11 @@ function Login() {
   async function handleLogin(e) {
     e.preventDefault();
     try {
-    const res = await axios.post(
-  "https://arti-helados-backend.vercel.app/auth/login",
-  {
-    email,
-    password,
-  }
-);
+  const res = await axios.post(`${API_URL}/auth/login`, {
+  email,
+  password,
+});
+
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
