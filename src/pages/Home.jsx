@@ -14,31 +14,62 @@ import PanelControl from "../components/PanelControl.jsx";
 // Assets
 import Logo from "../assets/arti.png";
 
-// ---- Estilos ---- 
+// ---- Estilos Minimalistas ---- 
 const styles = {
+  primaryColor: "#333",
+  backgroundLight: "#fefefe",
+  borderColor: "#ddd",
+
   appContainer: {
-    backgroundColor: "#fcfcfc",
+    backgroundColor: "#fefefe",
     minHeight: "100vh",
-    padding: "1px 0 5rem 0",
     color: "#333",
-  },
-  container: {
-    maxWidth: "500px",
-    margin: "30px auto",
-    padding: "0 15px",
     fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
   },
+
+  mainContentContainer: {
+    maxWidth: "450px",
+    margin: "0 auto",
+    padding: "20px 15px 50px 15px",
+    paddingTop: "100px",
+  },
+
   logoWrapper: {
     textAlign: "center",
-    marginBottom: "25px",
-    marginTop: "90px",
+    marginBottom: "30px",
   },
+
   logoImg: {
-    width: "160px",
+    width: "140px",
     height: "auto",
     objectFit: "contain",
     display: "block",
     margin: "0 auto",
+  },
+
+  orderSection: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "30px",
+  },
+
+  sizeButton: {
+    backgroundColor: "transparent",
+    color: "#333",
+    border: "1px solid #ddd",
+    padding: "10px 15px",
+    margin: "5px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontWeight: "500",
+    transition: "background-color 0.2s, border-color 0.2s",
+    minWidth: "100px",
+  },
+
+  sizeButtonSelected: {
+    backgroundColor: "#333",
+    color: "#fff",
+    border: "1px solid #333",
   },
 };
 
@@ -53,20 +84,29 @@ function Home() {
   const [currentPage, setCurrentPage] = useState("Order");
   const [availableFlavors, setAvailableFlavors] = useState([]);
 
+  // CAMBIE A PRODUCCION
+ async function loadFlavors() {
+  try {
+    const res = await fetch("https://arti-helados-backend.vercel.app/api/flavors");
+    const data = await res.json();
+
+    setAvailableFlavors(data);
+  } catch (err) {
+    console.error("Error cargando sabores:", err);
+  }
+}
+
+
   useEffect(() => {
-    fetch("http://localhost:4000/api/flavors")
-      .then((res) => res.json())
-      .then((data) => {
-        setAvailableFlavors(data.map((f) => f.name));
-      })
-      .catch((err) => console.error("Error cargando sabores:", err));
+    loadFlavors();
   }, []);
 
   const handleSelectSize = (val) => {
     setSize(val);
     if (val === "1/4 kg") setMaxFlavors(2);
-    if (val === "1/2 kg") setMaxFlavors(3);
-    if (val === "1 kg") setMaxFlavors(4);
+    else if (val === "1/2 kg") setMaxFlavors(3);
+    else if (val === "1 kg") setMaxFlavors(4);
+    else setMaxFlavors(0);
     setFlavors([]);
   };
 
@@ -86,6 +126,11 @@ function Home() {
     }
   };
 
+  const getSizeButtonStyle = (currentSize) => ({
+    ...styles.sizeButton,
+    ...(size === currentSize ? styles.sizeButtonSelected : {}),
+  });
+
   return (
     <div style={styles.appContainer}>
       <Navbar
@@ -95,28 +140,72 @@ function Home() {
         openPanel={() => setShowPanel(true)}
       />
 
-      <div style={styles.container}>
+      <main style={styles.mainContentContainer}>
         <div style={styles.logoWrapper}>
           <img src={Logo} alt="Arti Helados" style={styles.logoImg} />
         </div>
 
-        <CustomerForm customer={customer} setCustomer={setCustomer} />
+        <section style={styles.orderSection}>
+          <CustomerForm customer={customer} setCustomer={setCustomer} />
 
-        <SizeSelector size={size} handleSelectSize={handleSelectSize} />
+          {/* Tamaños */}
+          <div style={{ padding: "0 10px" }}>
+            <h3
+              style={{
+                fontSize: "1.3rem",
+                fontWeight: "800",
+                marginBottom: "15px",
+                borderBottom: "1px solid #eee",
+                paddingBottom: "8px",
+                textAlign: "center"
+              }}
+            >
+               Selecciona el Tamaño
+            </h3>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-around",
+                margin: "15px 0",
+              }}
+            >
+              <button
+                onClick={() => handleSelectSize("1/4 kg")}
+                style={getSizeButtonStyle("1/4 kg")}
+              >
+                1/4 kg
+              </button>
+              <button
+                onClick={() => handleSelectSize("1/2 kg")}
+                style={getSizeButtonStyle("1/2 kg")}
+              >
+                1/2 kg
+              </button>
+              <button
+                onClick={() => handleSelectSize("1 kg")}
+                style={getSizeButtonStyle("1 kg")}
+              >
+                1 kg
+              </button>
+            </div>
+          </div>
 
-        {size && (
-          <FlavorSelector
-            selected={flavors}
-            toggle={toggleFlavor}
-            max={maxFlavors}
-            flavorsList={availableFlavors}
-          />
-        )}
+          {/* Sabores */}
+          {size && (
+            <FlavorSelector
+              selected={flavors}
+              toggle={toggleFlavor}
+              max={maxFlavors}
+              flavorsList={availableFlavors} 
+            />
+          )}
 
-        {size && flavors.length === maxFlavors && (
-          <ConfirmOrder customer={customer} size={size} flavors={flavors} />
-        )}
-      </div>
+          {/* Confirmación */}
+          {size && flavors.length === maxFlavors && (
+            <ConfirmOrder customer={customer} size={size} flavors={flavors} />
+          )}
+        </section>
+      </main>
 
       <MapModal
         isVisible={showMapModal}
@@ -130,7 +219,12 @@ function Home() {
         navigate={handleNavigate}
       />
 
-      {showPanel && <PanelControl onClose={() => setShowPanel(false)} />}
+      {showPanel && (
+        <PanelControl
+          onClose={() => setShowPanel(false)}
+          onUpdate={loadFlavors}  
+        />
+      )}
     </div>
   );
 }

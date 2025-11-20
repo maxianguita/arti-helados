@@ -1,138 +1,189 @@
 // src/components/FlavorSelector.jsx
 import React from 'react';
+import { FaIceCream, FaCheck, FaExclamationCircle } from 'react-icons/fa';
 
+// ----------------------------------------------------
+// 1. Estilos
+// ----------------------------------------------------
+const styles = {
+    section: {
+        padding: '2.5rem',
+        marginBottom: '25px',
+        borderRadius: '16px',
+        backgroundColor: '#1a1a1a',
+        border: '1px solid #333333',
+        boxShadow: '0 10px 35px rgba(0, 0, 0, 0.45)',
+    },
+
+    sectionTitle: {
+        fontSize: '1.5rem',
+        color: '#ffffff',
+        fontWeight: '700',
+        marginTop: 0,
+        marginBottom: '1.5rem',
+        paddingBottom: '0.75rem',
+        borderBottom: '2px solid #FFD700',
+        textTransform: 'uppercase',
+        display: 'flex',
+        alignItems: 'center',
+        textAlign: 'center'
+    },
+
+    flavorCount: (remaining) => ({
+        textAlign: 'center',
+        marginBottom: '20px',
+        padding: '12px 15px',
+        backgroundColor: remaining > 0 ? '#333333' : '#a50000',
+        borderRadius: '10px',
+        color: '#ffffff',
+        fontWeight: '600',
+        border: remaining > 0 ? '1px solid #555555' : '1px solid #e53935',
+        fontSize: '1.1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    }),
+
+    flavorGrid: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '12px',
+        marginTop: '15px',
+        justifyContent: 'center',
+        maxHeight: '350px',
+        overflowY: 'auto',
+        paddingRight: '10px',
+    },
+
+    flavorBtn: {
+        padding: '14px 10px',
+        borderWidth: '2px',
+        borderStyle: 'solid',
+        borderColor: '#555555',
+        borderRadius: '10px',
+        backgroundColor: '#2c2c2c',
+        color: '#ffffff',
+        cursor: 'pointer',
+        fontSize: '12px',
+        fontWeight: '300',
+        textTransform: 'uppercase',
+        textAlign: 'center',
+        transition: 'all 0.25s ease',
+
+        width: '120px',
+        minWidth: '100px',
+        lineHeight: '1.2',
+
+        whiteSpace: 'normal',
+        overflowWrap: 'break-word',
+        wordBreak: 'break-word',
+        textOverflow: 'ellipsis'
+    },
+
+    flavorBtnHover: {
+        backgroundColor: '#FFD700',
+        color: '#111111',
+        borderColor: '#FFD700',
+        boxShadow: '0 4px 12px rgba(255, 215, 0, 0.4)',
+    },
+
+    flavorBtnSelected: {
+        backgroundColor: '#FFD700',
+        color: '#111111',
+        borderColor: '#FFD700',
+        fontWeight: '800',
+        boxShadow: '0 5px 15px rgba(255, 215, 0, 0.5)',
+    },
+
+   flavorBtnDisabled: {
+    opacity: 0.4,
+    cursor: 'not-allowed',
+    backgroundColor: '#111111',
+    borderWidth: '2px',
+    borderStyle: 'dashed',
+    borderColor: '#999999',
+    color: '#999999',
+    boxShadow: 'none',
+},
+
+
+    iconSpacing: {
+        marginRight: '10px',
+    }
+};
+
+// ----------------------------------------------------
+// 2. Componente Funcional CORREGIDO
+// ----------------------------------------------------
 export default function FlavorSelector({
-  selected,
-  toggle,
-  max,
-  flavorsList,
-  sectionStyle, // Mantendremos esta prop para el contenedor externo si es necesaria
+    selected,
+    toggle,
+    max,
+    flavorsList,
+    sectionStyle,
 }) {
-  
-  // Evita errores si flavorsList es undefined o no es array
-  if (!Array.isArray(flavorsList)) return null;
 
-  const remaining = max - selected.length;
+    if (!Array.isArray(flavorsList)) return null;
 
-  return (
-    <div style={sectionStyle} className="flavor-section">
-      {/* --- CSS embebido (Arti Helados y Móvil) --- */}
-      <style jsx="true">{`
-        /* 1. Contenedor de la Sección */
-        .flavor-section {
-          padding: 20px;
-          margin-bottom: 25px;
-          border: 1px solid #080808ff;
-          border-radius: 12px;
-          background-color: #ffffff;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        }
+    const remaining = max - selected.length;
+    const [hoveredFlavor, setHoveredFlavor] = React.useState(null);
 
-        /* 2. Título de la Sección */
-        .flavor-section h3 {
-          font-size: 1.4rem;
-          color: #4c5b6b; /* Gris azulado profesional */
-          margin-top: 0;
-          margin-bottom: 15px;
-          padding-bottom: 10px;
-          border-bottom: 2px solid #e5e5e5;
-          font-weight: 600;
-        }
+    return (
+        <div style={{ ...styles.section, ...sectionStyle }}>
 
-        /* 3. Contador de Sabores */
-        .flavor-count {
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 10px;
-            background-color: #e8f7fb; /* Fondo con tinte celeste */
-            border-radius: 8px;
-            color: #4c5b6b;
-            font-weight: 600;
-            border: 1px solid #cce9f2;
-            font-size: 1rem;
-        }
+            {/* Título */}
+            <h3 style={styles.sectionTitle}>
+                <FaIceCream style={styles.iconSpacing} />
+                Selecciona tus Sabores
+            </h3>
 
-        /* 4. Estilos de la Cuadrícula de Sabores (Flexible para móvil) */
-        .flavor-grid {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px; /* Menor espacio entre botones */
-          margin-top: 12px;
-        }
-        
-        /* Aseguramos que los botones ocupen espacio en la cuadrícula */
-        .flavor-grid button {
-            flex-grow: 1; /* Permite que los botones crezcan si es necesario */
-            flex-basis: calc(33.33% - 8px); /* Intenta 3 por fila en móvil */
-            min-width: 100px; /* Asegura un tamaño mínimo */
-        }
-        
-        /* 5. Estilo Base del Botón (Sabor) */
-        .flavor-btn {
-          padding: 12px 8px;
-          border: 1px solid #ddd;
-          border-radius: 8px; /* Bordes suaves */
-          background-color: #f9f9f9;
-          color: #333;
-          cursor: pointer;
-          font-size: 0.95rem;
-          font-weight: 500;
-          text-align: center;
-          transition: all 0.2s ease;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-          line-height: 1.2;
-        }
+            {/* Contador */}
+            <p style={styles.flavorCount(remaining)}>
+                {remaining === 0 ? (
+                    <>
+                        <FaExclamationCircle style={styles.iconSpacing} />
+                        ¡Máximo de {max} sabores alcanzado!
+                    </>
+                ) : (
+                    <>
+                        <FaCheck style={styles.iconSpacing} />
+                        Elegí hasta {max} sabores. ({remaining} restantes).
+                    </>
+                )}
+            </p>
 
-        /* 6. Estilo de Hover y No Seleccionado */
-        .flavor-btn:hover:not(.flavor-btn-selected):not(:disabled) {
-            background-color: #e8f7fb; /* Fondo celeste suave al pasar */
-            border-color: #00b4d8;
-        }
+            {/* Cuadrícula */}
+            <div style={styles.flavorGrid}>
+                {flavorsList.map((flavorObj, index) => {
+                    const flavor = flavorObj.name;
 
-        /* 7. Estilo del Sabor Seleccionado (Azul Celeste) */
-        .flavor-btn-selected {
-          background-color: #00b4d8; /* AZUL CELESTE ARTI HELADOS */
-          color: #fff;
-          border-color: #00b4d8;
-          font-weight: 700;
-          box-shadow: 0 3px 8px rgba(0, 180, 216, 0.3);
-        }
+                    const isSelected = selected.includes(flavor);
+                    const isDisabled = !isSelected && selected.length >= max;
 
-        /* 8. Estilo de Deshabilitado (Max alcanzado) */
-        .flavor-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background-color: #f4f4f4;
-            border: 2px dashed #0c0c0cff;
-            color: #999;
-            box-shadow: none;
-        }
+                    let buttonStyle = { ...styles.flavorBtn };
 
-      `}</style>
-      
-      <h3 className="section-title">Selecciona tus Sabores 🍨</h3>
-      
-      <p className="flavor-count">
-        Elegí hasta {max} sabores. Seleccionados: {selected.length} ({remaining} restantes).
-      </p>
+                    if (isSelected) {
+                        buttonStyle = { ...buttonStyle, ...styles.flavorBtnSelected };
+                    } else if (isDisabled) {
+                        buttonStyle = { ...buttonStyle, ...styles.flavorBtnDisabled };
+                    } else if (hoveredFlavor === flavor) {
+                        buttonStyle = { ...buttonStyle, ...styles.flavorBtnHover };
+                    }
 
-      <div className="flavor-grid">
-        {flavorsList.map((flavor) => {
-          const isSelected = selected.includes(flavor);
-           const isDisabled = !isSelected && selected.length >= max;
-
-          return (
-            <button
-              key={flavor}
-              onClick={() => toggle(flavor)}
-               disabled={isDisabled}
-              className={`flavor-btn ${isSelected ? 'flavor-btn-selected' : ''}`}
-            >
-              {flavor}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
+                    return (
+                        <button
+                            key={flavorObj.id ?? `${flavor}-${index}`}  // ← 🔥 key único
+                            onClick={() => toggle(flavor)}
+                            disabled={isDisabled}
+                            style={buttonStyle}
+                            onMouseEnter={() => setHoveredFlavor(flavor)}
+                            onMouseLeave={() => setHoveredFlavor(null)}
+                        >
+                            {flavor.toUpperCase()}
+                        </button>
+                    );
+                })}
+            </div>
+        </div>
+    );
 }

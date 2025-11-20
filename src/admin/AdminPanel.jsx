@@ -5,40 +5,56 @@ export default function AdminPanel() {
   const [flavors, setFlavors] = useState([]);
   const [newFlavor, setNewFlavor] = useState("");
 
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL; 
   const token = localStorage.getItem("token");
 
   // Traer sabores
   async function loadFlavors() {
-    const res = await axios.get(`${API_URL}/flavors`);
-    setFlavors(res.data);
+    try {
+      const res = await axios.get(`${API_URL}/flavors`);
+      setFlavors(res.data);
+    } catch (err) {
+      console.error("Error cargando sabores:", err);
+    }
   }
 
   // Crear sabor
   async function createFlavor(e) {
     e.preventDefault();
 
-    await axios.post(
-      `${API_URL}/flavors`,
-      { name: newFlavor },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    if (!newFlavor.trim()) return;
 
-    setNewFlavor("");
-    loadFlavors();
+    try {
+      await axios.post(
+        `${API_URL}/flavors`,
+        { name: newFlavor.trim() },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setNewFlavor("");
+      loadFlavors();
+    } catch (err) {
+      console.error("Error creando sabor:", err);
+    }
   }
 
   // Eliminar sabor
   async function deleteFlavor(id) {
-    await axios.delete(`${API_URL}/flavors/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    if (!window.confirm("¿Eliminar sabor?")) return;
 
-    loadFlavors();
+    try {
+      await axios.delete(`${API_URL}/flavors/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      loadFlavors();
+    } catch (err) {
+      console.error("Error eliminando sabor:", err);
+    }
   }
 
   useEffect(() => {

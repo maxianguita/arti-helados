@@ -1,97 +1,140 @@
 // src/components/ConfirmOrder.jsx
 import React, { useMemo, useState } from "react";
+// ⭐ Importar iconos de React Icons
+import { FaWhatsapp, FaCheckCircle, FaTimesCircle } from 'react-icons/fa'; 
 
 // Sanitizar teléfono
 function sanitize(value) {
   return String(value || "").replace(/\D/g, "");
 }
 
-// 🎨 Estilos Minimalistas Premium
+// ----------------------------------------------------
+// 1. Estilos (Objetos JSS - Oscuro, Contraste 'Nike')
+// ----------------------------------------------------
 const styles = {
-  section: {
-    padding: "20px",
-    marginBottom: "25px",
-    border: "1px solid #f1f1f1",
-    borderRadius: "12px",
-    backgroundColor: "#ffffff",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-  },
+    section: {
+        padding: "2.5rem", // Más padding
+        marginBottom: "25px",
+        borderRadius: "16px",
+        backgroundColor: "#1a1a1a", // Fondo oscuro
+        border: "1px solid #333333",
+        boxShadow: "0 10px 35px rgba(0, 0, 0, 0.45)", // Sombra fuerte
+        position: 'relative', // Para asegurar que el popup se muestre correctamente
+    },
 
-  sectionTitle: {
-    fontSize: "1.15rem",
-    color: "#2f3a4a",
-    fontWeight: "600",
-    marginBottom: "18px",
-    borderBottom: "1px solid #e4e4e4",
-    paddingBottom: "6px",
-    letterSpacing: "0.2px",
-  },
+    sectionTitle: {
+        fontSize: "1.5rem", // Título más grande
+        color: "#ffffff", // Título blanco
+        fontWeight: "700",
+        marginBottom: "1.5rem",
+        borderBottom: "2px solid #FFD700", 
+        paddingBottom: "0.75rem",
+        letterSpacing: "0.5px",
+        textTransform: "uppercase",
+    },
 
-  confirmBtn: {
-    width: "100%",
-    padding: "14px",
-    fontSize: "1rem",
-    fontWeight: "600",
-    color: "white",
-    backgroundColor: "#1fb45c",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-  },
+    confirmBtn: {
+        width: "100%",
+        padding: "10px 25px", 
+        fontSize: "1.3rem", 
+        fontWeight: "700",
+        color: "#111111", 
+        backgroundColor: "#4CAF50", 
+        border: "none",
+        borderRadius: "10px", 
+        cursor: "pointer",
+        transition: "all 0.25s ease",
+        display: 'flex', 
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '10px', 
+        textTransform: 'uppercase',
+    },
 
-  confirmBtnDisabled: {
-    opacity: 0.7,
-    cursor: "not-allowed",
-  },
+    confirmBtnHover: {
+      backgroundColor: "#43A047", // Verde ligeramente más oscuro en hover
+    },
 
-  popupOverlay: {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(0,0,0,0.5)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 9999,
-  },
+    confirmBtnDisabled: {
+        opacity: 0.6, // Menos opaco que antes
+        cursor: "not-allowed",
+        backgroundColor: "#6c757d", // Gris para deshabilitado
+        color: '#ffffff', // Texto blanco en deshabilitado
+    },
 
-  popupBox: {
-    background: "white",
-    padding: "28px",
-    borderRadius: "14px",
-    textAlign: "center",
-    width: "85%",
-    maxWidth: "320px",
-    boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
-  },
+    popupOverlay: {
+        position: "fixed",
+        inset: 0,
+        background: "rgba(0,0,0,0.8)", // Overlay más oscuro
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 9999,
+    },
 
-  popupText: {
-    fontSize: "1rem",
-    marginBottom: "18px",
-    color: "#333",
-    lineHeight: "1.45",
-  },
+    popupBox: {
+        background: "#1a1a1a", // Fondo oscuro para el popup
+        padding: "35px", // Más padding
+        borderRadius: "16px",
+        textAlign: "center",
+        width: "90%",
+        maxWidth: "400px", // Más ancho para ser más imponente
+        boxShadow: "0 15px 40px rgba(0,0,0,0.6)",
+        border: "1px solid #333333",
+    },
 
-  popupBtn: {
-    padding: "12px 20px",
-    backgroundColor: "#00b4d8",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: "600",
-    width: "100%",
-    transition: "background 0.2s ease",
-  },
+    popupText: {
+        fontSize: "1.2rem", // Texto más grande
+        marginBottom: "25px", // Más margen
+        color: "#ffffff", // Texto blanco
+        lineHeight: "1.5",
+    },
+    
+    popupSuccessIcon: {
+        fontSize: '3.5rem', // Icono grande
+        color: '#4CAF50', // Verde de éxito
+        marginBottom: '20px',
+    },
+    popupErrorIcon: {
+        fontSize: '3.5rem', // Icono grande
+        color: '#e53935', // Rojo de error
+        marginBottom: '20px',
+    },
+
+    popupBtn: {
+        padding: "14px 25px", // Más padding
+        backgroundColor: "#007bff", // Color de acción azul
+        color: "white",
+        border: "none",
+        borderRadius: "10px",
+        cursor: "pointer",
+        fontWeight: "700",
+        width: "100%",
+        transition: "background 0.2s ease",
+        textTransform: 'uppercase',
+        fontSize: '1.1rem',
+    },
+
+    popupBtnHover: {
+      backgroundColor: "#0056b3", // Azul más oscuro en hover
+    },
+
+    iconSpacing: {
+      marginRight: '10px',
+    }
 };
 
- function ConfirmOrder({ customer, size, flavors, sectionStyle }) {
+// ----------------------------------------------------
+// 2. Componente Funcional
+// ----------------------------------------------------
+function ConfirmOrder({ customer, size, flavors }) { 
   const [popup, setPopup] = useState(false);
   const [sending, setSending] = useState(false);
+  const [btnHovered, setBtnHovered] = useState(false); 
+  const [popupBtnHovered, setPopupBtnHovered] = useState(false); 
 
   const businessPhone = sanitize("5491135635555");
 
-  // Precio según tamaño
   const price = useMemo(() => {
     if (size === "1/4 kg") return 5000;
     if (size === "1/2 kg") return 6000;
@@ -100,17 +143,17 @@ const styles = {
   }, [size]);
 
   // Mensaje a enviar con dirección incluida
-const message =
-  `🍨 *Nuevo Pedido de Helado*\n\n` +
-  `👤 *Cliente:* ${customer.name}\n` +
-  `📞 *Teléfono:* ${sanitize(customer.phone)}\n` +
-  (customer.address
-    ? `🚚 *Llevar pedido a:* ${customer.address}\n`
-    : "🚚 *Llevar pedido a:* Dirección no especificada\n") +
-  `📦 *Tamaño:* ${size}\n` +
-  `🍧 *Sabores:* ${flavors.join(", ")}\n` +
-  `💵 *Precio estimado:* $${price}\n\n` +
-  `¡Gracias por elegir Arti Helados! 💙🍦`;
+  const message =
+    `🍨 *Nuevo Pedido de Helado*\n\n` +
+    `👤 *Cliente:* ${customer.name}\n` +
+    `📞 *Teléfono:* ${sanitize(customer.phone)}\n` +
+    (customer.address
+      ? `🚚 *Llevar pedido a:* ${customer.address}\n`
+      : "🚚 *Llevar pedido a:* Dirección no especificada\n") +
+    `📦 *Tamaño:* ${size}\n` +
+    `🍧 *Sabores:* ${flavors.join(", ")}\n` +
+    `💵 *Precio estimado:* $${price}\n\n` +
+    `¡Gracias por elegir Arti Helados! 💙🍦`;
 
   // URL de WhatsApp
   const waUrl = `https://wa.me/${businessPhone}?text=${encodeURIComponent(message)}`;
@@ -130,36 +173,49 @@ const message =
 
   return (
     <>
-      <div style={sectionStyle || styles.section}>
+      <div style={styles.section}> 
         <h2 style={styles.sectionTitle}>4. Confirmar Pedido</h2>
 
         <button
           style={{
             ...styles.confirmBtn,
+            ...(btnHovered && !sending ? styles.confirmBtnHover : {}), 
             ...(sending ? styles.confirmBtnDisabled : {}),
           }}
           onClick={handleConfirm}
           disabled={sending}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = "#19994e")}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = "#1fb45c")}
+          onMouseEnter={() => setBtnHovered(true)}
+          onMouseLeave={() => setBtnHovered(false)}
         >
-          {sending ? "Abriendo WhatsApp..." : "Enviar Pedido por WhatsApp"}
+          {sending ? (
+            <>
+              <FaWhatsapp style={styles.iconSpacing} /> Abriendo WhatsApp...
+            </>
+          ) : (
+            <>
+              <FaWhatsapp style={styles.iconSpacing} /> Enviar Pedido por WhatsApp
+            </>
+          )}
         </button>
       </div>
 
       {popup && (
         <div style={styles.popupOverlay} onClick={() => setPopup(false)}>
           <div style={styles.popupBox} onClick={(e) => e.stopPropagation()}>
+            <FaCheckCircle style={styles.popupSuccessIcon} /> {/* Icono de éxito */}
             <p style={styles.popupText}>
-              ¡Tu pedido fue generado con éxito! 🎉🍦  
-              <br />Confirmalo en WhatsApp para finalizar.
+              ¡Tu pedido fue generado con éxito! 🎉 
+              <br />Confírmalo en WhatsApp para finalizar.
             </p>
 
             <button
-              style={styles.popupBtn}
+              style={{
+                ...styles.popupBtn,
+                ...(popupBtnHovered ? styles.popupBtnHover : {})
+              }}
               onClick={() => setPopup(false)}
-              onMouseEnter={(e) => (e.target.style.backgroundColor = "#0091b0")}
-              onMouseLeave={(e) => (e.target.style.backgroundColor = "#00b4d8")}
+              onMouseEnter={() => setPopupBtnHovered(true)}
+              onMouseLeave={() => setPopupBtnHovered(false)}
             >
               Entendido
             </button>
@@ -169,4 +225,5 @@ const message =
     </>
   );
 }
-export default ConfirmOrder
+
+export default ConfirmOrder;
